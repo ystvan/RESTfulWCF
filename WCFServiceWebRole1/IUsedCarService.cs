@@ -22,6 +22,11 @@ namespace WCFServiceWebRole1
         Car GetCarById(string id);
 
         [OperationContract]
+        [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            UriTemplate = "Cars/Model/{text}")]
+        IList<Car> GetCarByModel(string text);
+
+        [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
             UriTemplate = "Cars/")]
         Car AddCar(Car newCar);

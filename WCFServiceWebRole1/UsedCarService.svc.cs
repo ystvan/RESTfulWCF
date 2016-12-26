@@ -97,5 +97,15 @@ namespace WCFServiceWebRole1
             return true;
 
         }
+
+        /// <summary>
+        /// Returns a car by searching criteria
+        /// </summary>
+        /// <param name="text">The query of the Model</param>
+        /// <returns>A list of matched Car objects</returns>
+        public IList<Car> GetCarByModel(string text)
+        {
+            return usedCars.Where(c => c.Model.ToLower().Contains(text.ToLower())).ToList();
+        }
     }
 }
