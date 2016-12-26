@@ -9,14 +9,18 @@ namespace WCFServiceWebRole1
 {
     public class UsedCarService : IUsedCarService
     {
-        private static int _nextId = 4;
-        private static IList<Car> usedCars = new List<Car>()
-        {
-            new Car(){Id = 1, Model = "Ford Mustang", Price = 120000, Year = 1976},
-            new Car(){Id = 2, Model = "VW Golf", Price = 28000, Year = 1989},
-            new Car(){Id = 3, Model = "Lada 1500", Price = 100, Year = 1966},
-            new Car(){Id = 4, Model = "Ferrari Testarosa", Price = 6000000, Year = 1995}
-        };
+
+        CarModel db = new CarModel();
+
+        //TODO: this is not used any more, since now using Azure DB
+        //private static int _nextId = 4;
+        //private static IList<Car> usedCars = new List<Car>()
+        //{
+        //    new Car(){Id = 1, Model = "Ford Mustang", Price = 120000, Year = 1976},
+        //    new Car(){Id = 2, Model = "VW Golf", Price = 28000, Year = 1989},
+        //    new Car(){Id = 3, Model = "Lada 1500", Price = 100, Year = 1966},
+        //    new Car(){Id = 4, Model = "Ferrari Testarosa", Price = 6000000, Year = 1995}
+        //};
 
         /// <summary>
         /// Returns all of the Car objects
@@ -24,7 +28,8 @@ namespace WCFServiceWebRole1
         /// <returns>List of cars</returns>
         public IList<Car> GetAllCars()
         {
-            return usedCars;
+            //return usedCars;
+            return db.Cars.ToList();
         }
 
         /// <summary>
@@ -35,7 +40,9 @@ namespace WCFServiceWebRole1
         public Car GetCarById(string id)
         {
             int idNumber = int.Parse(id);
-            Car match = usedCars.FirstOrDefault(c => c.Id == idNumber);
+            //Car match = usedCars.FirstOrDefault(c => c.Id == idNumber);
+            Car match = db.Cars.FirstOrDefault(c => c.Id == idNumber);
+
             return match;
         }
 
@@ -50,8 +57,10 @@ namespace WCFServiceWebRole1
             {
                 throw new ArgumentNullException(nameof(newCar));
             }
-            newCar.Id = _nextId++;
-            usedCars.Add(newCar);
+            //newCar.Id = _nextId++;
+            //usedCars.Add(newCar);
+            db.Cars.Add(newCar);
+            db.SaveChanges();
             return newCar;
 
         }
@@ -74,6 +83,8 @@ namespace WCFServiceWebRole1
             matching.Price = updatedCar.Price;
             matching.Year = updatedCar.Year;
 
+            db.SaveChanges();
+
             return true;
 
         }
@@ -91,8 +102,11 @@ namespace WCFServiceWebRole1
                 throw new ArgumentNullException(nameof(matching));
                 return false;
             }
-            var idx = usedCars.IndexOf(matching);
-            usedCars.RemoveAt(idx);
+            //var idx = usedCars.IndexOf(matching);
+            //usedCars.RemoveAt(idx);
+
+            db.Cars.Remove(matching);
+            db.SaveChanges();
 
             return true;
 
@@ -105,7 +119,8 @@ namespace WCFServiceWebRole1
         /// <returns>A list of matched Car objects</returns>
         public IList<Car> GetCarByModel(string text)
         {
-            return usedCars.Where(c => c.Model.ToLower().Contains(text.ToLower())).ToList();
+            //return usedCars.Where(c => c.Model.ToLower().Contains(text.ToLower())).ToList();
+            return db.Cars.Where(c => c.Model.ToLower().Contains(text.ToLower())).ToList();
         }
     }
 }
